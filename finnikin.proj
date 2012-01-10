@@ -1,0 +1,17 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="ReleaseBuild">
+    <PropertyGroup>
+        <ProjectBaseName>finnikin</ProjectBaseName>
+        <WarningLevel>4</WarningLevel>
+        <BinaryType>library</BinaryType>
+        <DocFile>$(ProjectBaseName).xml</DocFile>
+    </PropertyGroup>    
+    <ItemGroup>
+        <Compile Include="$(ProjectBaseName).fs"/>
+    </ItemGroup>   
+    <!-- <ItemGroup>
+        <References/>
+    </ItemGroup> -->   
+    <Target Name="ReleaseBuild">
+        <Exec Command="fsc @(Compile) --target:$(BinaryType) --doc:$(DocFile) --warnaserror --warn:$(WarningLevel)"/>  
+    </Target>
+</Project>
