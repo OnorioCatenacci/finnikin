@@ -35,7 +35,7 @@ module finnikin
     ///<param name="envVarName">Environment variable to set definition for</param>
     ///<param name="envVarValue">Value to set specified environment variable to</param>
     ///<param name="overwrite">If the environment variable is already set should the value be overwritten</param>
-    let setEnvironmentVariable envVarName envVarValue overwrite =
+    let setEnvironmentVariable overwrite envVarName envVarValue =
         0    
     
     ///<summary>

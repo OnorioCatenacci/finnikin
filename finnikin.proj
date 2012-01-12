@@ -14,4 +14,7 @@
     <Target Name="ReleaseBuild">
         <Exec Command="fsc @(Compile) --target:$(BinaryType) --doc:$(DocFile) --warnaserror --warn:$(WarningLevel)"/>  
     </Target>
+    <Target Name="DebugBuild"/>
+    <Target Name="BuildTest"/>
+    <Target Name="RunTests" Depends="BuildTest"/>
 </Project>
