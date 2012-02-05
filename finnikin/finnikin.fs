@@ -6,21 +6,27 @@
 *)
 
 ///<summary>
-///The finnikin module
+///The Finnikin namespace
 ///</summary>
-namespace finnikin 
+namespace Finnikin 
     open System
     open System.IO
     open System.Security
+
+    type opResult =
+        public  
+        | Success
+        | SuccessWithMessage
+        | Failure
  
-    module finnikin =
+    module FinnikinMain =
     
         ///<summary>
         /// Returns an option containing the definition of the environment string if it exists or None otherwise.  NB at least on Mac OSX environment variables are case-sensitive.
         /// That is, path <> PATH and the code doesn't automatically test for all possible cases.
         ///</summary>
         ///<param name="envVarName">Environment variable name to get the definition of</param>
-        let getEnvironmentVariable envVarName =
+        let GetEnvironmentVariable envVarName =
             try
                 let envVar = Environment.GetEnvironmentVariable(envVarName)
                 match envVar with
@@ -36,8 +42,15 @@ namespace finnikin
         ///<param name="envVarName">Environment variable to set definition for</param>
         ///<param name="envVarValue">Value to set specified environment variable to</param>
         ///<param name="overwrite">If the environment variable is already set should the value be overwritten</param>
-        let setEnvironmentVariable overwrite envVarName envVarValue =
-            0    
+        let SetEnvironmentVariable overwrite envVarName envVarValue =
+            if (not overwrite && Option.isSome(GetEnvironmentVariable envVarName)) then
+                Failure
+            else
+                try
+                    Environment.SetEnvironmentVariable (envVarName, envVarValue)
+                    Success
+                with
+                | :? SecurityException -> Failure        
         
         ///<summary>
         /// Check for invalid characters in a file name
@@ -52,7 +65,7 @@ namespace finnikin
         ///<param name="baseDir">Directory to start looking for files in</param>
         ///<param name="fileSpec">File mask to match</param>
         ///<param name="recurse">Should the process recurse into subdirectories or not</param>         
-        let getFileList baseDir fileSpec recurse =
+        let GetFileList baseDir fileSpec recurse =
             try
                 if Directory.Exists(baseDir) then
                     let rec getAllFiles baseDir fileSpec =
@@ -66,8 +79,7 @@ namespace finnikin
                 else
                     Seq.empty
             with
-            | :? SecurityException -> Seq.empty
-            | :? UnauthorizedAccessException -> Seq.empty
+            | :? SecurityException | :? UnauthorizedAccessException -> Seq.empty
 
         ///<summary>
         ///Touch a specified file or set of files to modify the datetime for purposes of building
@@ -75,5 +87,5 @@ namespace finnikin
         ///<param name="baseDir">Directory to start looking for files in</param>
         ///<param name="fileSpec">File mask to match</param>
         ///<param name="recurse">Should the operation recurse into subdirectories or not</param>
-        let touch baseDir fileSpec recurse =
-            getFileList baseDir fileSpec recurse |> Seq.iter (fun f -> FileInfo(f).LastAccessTime <- DateTime.Now)
+        let Touch baseDir fileSpec recurse =
+            GetFileList baseDir fileSpec recurse |> Seq.iter (fun f -> FileInfo(f).LastAccessTime <- DateTime.Now)

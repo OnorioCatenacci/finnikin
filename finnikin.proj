@@ -3,20 +3,28 @@
         <ProjectBaseName>finnikin</ProjectBaseName>
         <WarningLevel>4</WarningLevel>
         <BinaryType>library</BinaryType>
+        <TestBinaryType>exe</TestBinaryType>
+        <TestBinaryName>$(ProjectBaseName).test</TestBinaryName>
         <DocFile>$(ProjectBaseName).xml</DocFile>
     </PropertyGroup>    
     <ItemGroup>
-        <Compile Include="$(ProjectBaseName).assemblyinfo.fs"/>
         <Compile Include="$(ProjectBaseName).fs"/>
+        <Compile Include="$(ProjectBaseName).assemblyinfo.fs"/>
+        <Compile Include="$(ProjectBaseName).test.fs"/>
     </ItemGroup>   
-    <!-- <ItemGroup>
-        <References/>
-    </ItemGroup> -->   
+    <ItemGroup>
+        <References Include="&quot;$(NUnitBin)\net-2.0\framework\nunit.mocks.dll&quot;"/>
+<!--        <References Include="&quot;$(NUnitBin)\net-2.0\framework\pnunit.framework.dll&quot;"/> -->
+        <References Include="&quot;$(NUnitBin)\net-2.0\lib\nunit.core.dll&quot;"/>
+        <References Include="&quot;$(NUnitBin)\net-2.0\framework\nunit.framework.dll&quot;"/>
+    </ItemGroup>  
     <Target Name="ReleaseBuild">
-        <Exec Command="fsc @(Compile, ' ') --target:$(BinaryType) --doc:$(DocFile) --warnaserror --warn:$(WarningLevel) --out:$(ProjectBaseName).dll"/>  
+        <Exec Command="fsc @(Compile, ' ') -r:@(References, ' -r:') --target:$(BinaryType) --doc:$(DocFile) --warnaserror --warn:$(WarningLevel) --out:$(ProjectBaseName).dll"/>  
     </Target>
     <Target Name="DebugBuild"/>
-    <Target Name="BuildTest"/>
+    <Target Name="BuildTest">
+       <Exec Command="fsc @(Compile, ' ') -r:@(References, ' -r:') --target:$(TestBinaryType) --warnaserror --warn:$(WarningLevel) --out:$(TestBinaryName).exe"/>
+    </Target>
     <Target Name="RunTests" DependsOnTargets="BuildTest"/>
     <Target Name="Clean"/>
         
