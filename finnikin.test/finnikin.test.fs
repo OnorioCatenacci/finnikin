@@ -8,26 +8,21 @@
 
     module Test =
         [<Test>]
-        let ``testGetEnvironment``() =
-            Assert.IsTrue(Option.isSome(FinnikinMain.GetEnvironmentVariable "PATH"))
+        let ``TestGetEnvironmentVariable``() =
+            Assert.IsTrue(Option.isSome(Main.GetEnvironmentVariable "PATH"))
 
         [<Test>]
-        let ``testGetNonExistentEnvironmentVariable``() =
-            Assert.IsTrue(Option.isNone(FinnikinMain.GetEnvironmentVariable "NonExistent")) 
+        let ``TestGetNonExistentEnvironmentVariable``() =
+            Assert.IsTrue(Option.isNone(Main.GetEnvironmentVariable "NonExistent"))
+         
+        [<Test>]
+        let ``TestGetEnvironmentVariableWithEmptyName``() =
+            Assert.IsTrue(Option.isNone(Main.GetEnvironmentVariable ""))     
         
         [<Test>]
-        let ``testOverwriteExistingEnvVar``() =
-            let currentPath = FinnikinMain.GetEnvironmentVariable "PATH"
-            let setEnvVarResult = FinnikinMain.SetEnvironmentVariable true "PATH" "P1"
-            Assert.AreEqual(Finnikin.opResult.Success,setEnvVarResult)
-            FinnikinMain.SetEnvironmentVariable true "PATH" currentPath.Value |> ignore
-
-        [<Test>]
-        let ``testDoNotOverwriteExistingEnvVar``() =
-            let setEnvVarResult = FinnikinMain.SetEnvironmentVariable false "PATH" "P1"
+        let ``TestDoNotOverwriteExistingEnvironmentVariable``() =
+            let setEnvVarResult = Main.SetEnvironmentVariable false "PATH" "P1"
             Assert.AreEqual(Finnikin.opResult.Failure,setEnvVarResult)
-
-
 
         [<EntryPoint>]
         let main args =

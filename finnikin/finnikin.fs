@@ -19,7 +19,7 @@ namespace Finnikin
         | SuccessWithMessage
         | Failure
  
-    module FinnikinMain =
+    module Main =
     
         ///<summary>
         /// Returns an option containing the definition of the environment string if it exists or None otherwise.  NB at least on Mac OSX environment variables are case-sensitive.
@@ -42,12 +42,12 @@ namespace Finnikin
         ///<param name="envVarName">Environment variable to set definition for</param>
         ///<param name="envVarValue">Value to set specified environment variable to</param>
         ///<param name="overwrite">If the environment variable is already set should the value be overwritten</param>
-        let SetEnvironmentVariable overwrite envVarName envVarValue =
-            if (not overwrite && Option.isSome(GetEnvironmentVariable envVarName)) then
+        let SetEnvironmentVariable shouldOverwrite environmentVariableName environmentVariableValue =
+            if (not shouldOverwrite && Option.isSome(GetEnvironmentVariable environmentVariableName)) then
                 Failure
             else
                 try
-                    Environment.SetEnvironmentVariable (envVarName, envVarValue)
+                    Environment.SetEnvironmentVariable (environmentVariableName, environmentVariableValue)
                     Success
                 with
                 | :? SecurityException -> Failure        
