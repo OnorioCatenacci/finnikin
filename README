@@ -1,0 +1,2 @@
+==The Finnikin Library
+This library is intended to aid F# developers with creating F# Shell Scripts (*.fsx files). As such we wrap certain common shell type operations e. g. getting the value of an environment variable in order to make them safer and to do them in an idiomatic F# way.
