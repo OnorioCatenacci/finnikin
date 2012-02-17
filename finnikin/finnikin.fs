@@ -12,20 +12,25 @@ module Finnikin
     open System.Security
     open System.ServiceProcess
     
+    let private isPosixPlatform =
+        Environment.OSVersion.Platform = PlatformID.Unix || Environment.OSVersion.Platform = PlatformID.MacOSX
+    
+    //Allow for the fact we may be running on Linux or MacOSX
+    let private correctedEnvironmentVariableName (environmentVariableName:string) =
+        if isPosixPlatform then
+            environmentVariableName.ToUpper()
+        else
+            environmentVariableName
+         
+
     ///<summary>
     /// Returns an option containing the definition of the environment string if it exists or None otherwise.  NB at least on Mac OSX environment variables are case-sensitive.
     /// That is, path <> PATH and the code doesn't automatically test for all possible cases.
     ///</summary>
     ///<param name="envVarName">Environment variable name to get the definition of</param>
-    let GetEnvironmentVariable (envVarName:string) =
+    let GetEnvironmentVariable (environmentVariableName:string) =
         try
-            //We need to allow for the fact that we may be on a Mono box.
-            let correctedEnvVarName = 
-                if (Environment.OSVersion.Platform = PlatformID.Unix || Environment.OSVersion.Platform = PlatformID.MacOSX) then
-                    envVarName.ToUpper()
-                else
-                    envVarName
-            let envVar = Environment.GetEnvironmentVariable(correctedEnvVarName)
+            let envVar = Environment.GetEnvironmentVariable(correctedEnvironmentVariableName environmentVariableName)
             match envVar with
             | null -> None
             | _ -> Some(envVar)
@@ -40,11 +45,12 @@ module Finnikin
     ///<param name="envVarValue">Value to set specified environment variable to</param>
     ///<param name="overwrite">If the environment variable is already set should the value be overwritten</param>
     let SetEnvironmentVariable shouldOverwrite environmentVariableName environmentVariableValue =
-        if (not shouldOverwrite && Option.isSome(GetEnvironmentVariable environmentVariableName)) then
+        let platformCorrectedEnvironmentVariableName = correctedEnvironmentVariableName environmentVariableName
+        if (not shouldOverwrite && Option.isSome(GetEnvironmentVariable platformCorrectedEnvironmentVariableName)) then
             false
         else
             try
-                Environment.SetEnvironmentVariable (environmentVariableName, environmentVariableValue)
+                Environment.SetEnvironmentVariable (platformCorrectedEnvironmentVariableName, environmentVariableValue)
                 true
             with
             | :? SecurityException -> false        
