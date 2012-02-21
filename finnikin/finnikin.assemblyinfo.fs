@@ -9,7 +9,7 @@ namespace finnikin
     [<assembly: AssemblyTitle ("Finnikin")>]
     [<assembly: AssemblyDescription ("Finnikin is an F# library to ease with the creation of FSX scripts")>]
     [<assembly: AssemblyProduct ("Finnikin")>]
-    [<assembly: AssemblyVersion ("0.3.1")>]
-    [<assembly: AssemblyFileVersion ("0.3.1")>]
+    [<assembly: AssemblyVersion ("0.3.11")>]
+    [<assembly: AssemblyFileVersion ("0.3.11")>]
     [<assembly: AssemblyDelaySign (false)>]
     do ()

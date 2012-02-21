@@ -2,7 +2,7 @@
 * Finnikin
 * Onorio Catenacci
 * Finnikin is an F# library to make certain shell operations easier.  Since this is intended to be used from F#, usability from other .Net languages is not a high priority issue.
-* v0.3.0 13 February 2012
+* v0.3.11 20 February 2012
 *)
 
 module Finnikin
@@ -165,3 +165,42 @@ module Finnikin
         with
         | :? SecurityException -> (false, None)
 
+
+
+    open System.DirectoryServices.AccountManagement
+
+    ///<Summary>
+    ///A structure that encapsulates the details necessary to create a new Windows user
+    ///</Summary>
+    type windowsUser = {
+        userName:string
+        password:string
+        displayName:string
+        description:string
+        canChangePassword:bool
+        passwordExpires:bool
+    }
+
+    ///<Summary>
+    ///The call to create a new user in a given domain context. Takes a windowsUser record and a machine name as arguments
+    ///</Summary>
+    ///<param name="newUserSpec">The windowsUser record that specifies the details of the new user</param>
+    ///<param name="machineID">The hostname of the domain in which to create this new user</param>
+    let CreateNewWindowsAccount newUserSpec machineID =
+        try
+            let pc = new PrincipalContext(ContextType.Machine, machineID)
+            let mutable user = new UserPrincipal(pc)
+            user.SetPassword(newUserSpec.password)
+            user.DisplayName <-newUserSpec.displayName
+            user.Name <- newUserSpec.userName
+            user.Description <- newUserSpec.description
+            user.UserCannotChangePassword <- newUserSpec.canChangePassword
+            user.PasswordNeverExpires <- newUserSpec.passwordExpires
+            user.Save()
+
+            let mutable gp = GroupPrincipal.FindByIdentity(pc, "Users")
+            gp.Members.Add(user)
+            gp.Save()
+            true
+        with
+            | :? FileNotFoundException -> false
