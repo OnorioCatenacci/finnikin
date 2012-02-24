@@ -2,7 +2,7 @@
 * Finnikin
 * Onorio Catenacci
 * Finnikin is an F# library to make certain shell operations easier.  Since this is intended to be used from F#, usability from other .Net languages is not a high priority issue.
-* v0.3.11 20 February 2012
+* v0.3.12 23 February 2012
 *)
 
 module Finnikin
@@ -13,7 +13,9 @@ module Finnikin
     open System.ServiceProcess
     
     let private isPosixPlatform =
-        Environment.OSVersion.Platform = PlatformID.Unix || Environment.OSVersion.Platform = PlatformID.MacOSX
+        match Environment.OSVersion.Platform with
+        | PlatformID.Unix | PlatformID.MacOSX -> true
+        | _ -> false
     
     //Allow for the fact we may be running on Linux or MacOSX
     let private correctedEnvironmentVariableName (environmentVariableName:string) =
@@ -21,7 +23,15 @@ module Finnikin
             environmentVariableName.ToUpper()
         else
             environmentVariableName
-         
+
+    ///<Summary>
+    /// Convert a normal string to a SecureString
+    ///</Summary>
+    ///<param name="s">The normal string to convert to a secure string</param>
+    let private toSecureString (s:string) =
+        use sString = new SecureString()
+        [| for i in 0 .. s.Length-1 do yield sString.AppendChar s.[i]|] |> ignore
+        sString         
 
     ///<summary>
     /// Returns an option containing the definition of the environment string if it exists or None otherwise.  NB at least on Mac OSX environment variables are case-sensitive.
@@ -158,7 +168,7 @@ module Finnikin
     let RunProcessAs userID password exeToRun arguments = 
         let pStartInfo = new ProcessStartInfo(exeToRun,arguments)
         pStartInfo.UserName <- userID
-        pStartInfo.Password <- password
+        pStartInfo.Password <- toSecureString(password)
         try
             let p = Process.Start(pStartInfo).WaitForExit
             (true,Some(p))
