@@ -1,6 +1,6 @@
 (*
  * Unit tests for finnikin library
- * Corresponding to finnikin lib v0.3.11
+ * Corresponding to finnikin lib v0.3.13
  *
  *)
 module Finnikin.Test 

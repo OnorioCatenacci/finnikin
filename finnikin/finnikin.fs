@@ -2,7 +2,7 @@
 * Finnikin
 * Onorio Catenacci
 * Finnikin is an F# library to make certain shell operations easier.  Since this is intended to be used from F#, usability from other .Net languages is not a high priority issue.
-* v0.3.12 23 February 2012
+* v0.3.13 27 February 2012
 *)
 
 module Finnikin
@@ -28,9 +28,9 @@ module Finnikin
     /// Convert a normal string to a SecureString
     ///</Summary>
     ///<param name="s">The normal string to convert to a secure string</param>
-    let private toSecureString (s:string) =
+    let private toSecureString s =
         use sString = new SecureString()
-        [| for i in 0 .. s.Length-1 do yield sString.AppendChar s.[i]|] |> ignore
+        s |> Seq.iter (fun cl -> sString.AppendChar cl)
         sString         
 
     ///<summary>
