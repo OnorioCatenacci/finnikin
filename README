@@ -1,3 +1,5 @@
 The Finnikin Library
 
 This library is intended to aid F# developers with creating F# Shell Scripts (*.fsx files). As such we wrap certain common shell type operations e. g. getting the value of an environment variable in order to make them safer and to code them in a more idiomatic F# way.
+
+This package is no longer maintained (and has not been in several years) so I am archiving it so that others will be clear that this is unmaintained. 
